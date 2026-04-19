@@ -1,0 +1,26 @@
+# FastAPI Backend Dependencies
+fastapi==0.108.0
+uvicorn[standard]==0.25.0
+python-multipart==0.0.6
+
+# Database
+SQLAlchemy==2.0.23
+PyMySQL==1.1.0
+mysql-connector-python==8.2.0
+
+# Authentication & Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-dotenv==1.0.0
+
+# ML/NLP (optional - can be added later)
+scikit-learn>=1.4.0
+pandas>=2.1.0
+numpy>=1.26.0
+transformers>=4.30.0
+sentence-transformers>=2.2.0
+torch>=2.0.0
+
+# Utilities
+pydantic==2.5.3
+pydantic-settings==2.1.0

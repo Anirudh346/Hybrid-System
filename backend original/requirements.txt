@@ -1,0 +1,39 @@
+# FastAPI Backend Dependencies
+fastapi==0.108.0
+uvicorn[standard]==0.25.0
+python-multipart==0.0.6
+
+# Database
+motor==3.3.2
+beanie==1.24.0
+pymongo==4.6.1
+
+# Authentication & Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-dotenv==1.0.0
+
+# ML/NLP
+scikit-learn==1.4.0
+pandas==2.1.4
+numpy==1.26.2
+transformers==4.36.2
+# Relaxed torch pin to allow installation on newer Python versions.
+# Use the official PyTorch install selector if you need CUDA or a specific wheel.
+torch>=2.2.0,<3.0
+# sentencepiece can require a C++ build toolchain on Windows for some Python versions.
+# If you need sentencepiece for specific models, install it manually per your platform
+# (see https://github.com/google/sentencepiece) or use the wheel from PyPI/conda.
+# sentencepiece==0.1.99
+
+# Task Queue
+celery==5.3.4
+redis==5.0.1
+
+# Email
+sendgrid==6.11.0
+
+# Utilities
+pydantic==2.5.3
+pydantic-settings==2.1.0
+email-validator==1.3.1
