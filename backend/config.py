@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     # MySQL Database
     database_url: str = Field(
         default="mysql+pymysql://root:123@localhost:3306/device_catalog",
-        validation_alias=AliasChoices("DATABASE_URL", "MYSQL_URL", "MYSQL_PUBLIC_URL"),
+        validation_alias=AliasChoices("DATABASE_URL", "MYSQL_PUBLIC_URL", "MYSQL_URL"),
     )
     database_host: str = Field(
         default="localhost",
