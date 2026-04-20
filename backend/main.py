@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+import os
 
 from config import Settings
 from database import init_db, engine
@@ -20,15 +21,19 @@ async def lifespan(app: FastAPI):
     init_db()
     print(f"[OK] Connected to MySQL database: {settings.database_name}")
     
-    # Optional: Pre-load NLP models on startup (takes 30-60 seconds but avoids first request lag)
-    try:
-        print("[INFO] Pre-loading NLP models (this may take 30-60 seconds)...")
-        from routers.devices import nlp_service_preload
-        nlp_service_preload()
-        print("[OK] NLP models pre-loaded successfully")
-    except Exception as e:
-        print(f"[WARN] NLP pre-loading skipped: {str(e)}")
-        print("   (NLP will lazy-load on first request)")
+    # Disable heavy NLP preload by default in cloud deploys to keep startup fast.
+    preload_nlp = os.getenv("PRELOAD_NLP", "false").strip().lower() in {"1", "true", "yes"}
+    if preload_nlp:
+        try:
+            print("[INFO] Pre-loading NLP models (this may take 30-60 seconds)...")
+            from routers.devices import nlp_service_preload
+            nlp_service_preload()
+            print("[OK] NLP models pre-loaded successfully")
+        except Exception as e:
+            print(f"[WARN] NLP pre-loading skipped: {str(e)}")
+            print("   (NLP will lazy-load on first request)")
+    else:
+        print("[INFO] NLP preload disabled (set PRELOAD_NLP=true to enable)")
     
     yield
     
