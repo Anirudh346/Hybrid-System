@@ -21,6 +21,7 @@ def _normalize_mysql_url(raw_url: str) -> tuple[str, dict]:
     as strings (e.g. ssl=true), but PyMySQL expects ssl to be a dict.
     """
     url = make_url(raw_url)
+    is_local_host = url.host in {"localhost", "127.0.0.1", "::1"}
 
     # Ensure explicit PyMySQL driver.
     if url.drivername == "mysql":
@@ -45,12 +46,32 @@ def _normalize_mysql_url(raw_url: str) -> tuple[str, dict]:
             query.pop("ssl_mode", None)
             query.pop("sslmode", None)
 
+    # Railway and similar hosted MySQL providers typically expect SSL.
+    # If no SSL option is provided, enable it automatically for non-local hosts.
+    if not is_local_host and "ssl" not in connect_args:
+        connect_args["ssl"] = {}
+
     normalized_url = str(url.set(query=query))
     return normalized_url, connect_args
 
 
 # MySQL connection string
 DATABASE_URL, CONNECT_ARGS = _normalize_mysql_url(settings.database_url)
+
+# Log safe connection metadata so deployment logs can confirm which env values are active.
+try:
+    parsed_db_url = make_url(DATABASE_URL)
+    print(
+        "[DB TARGET] "
+        f"driver={parsed_db_url.drivername} "
+        f"user={parsed_db_url.username} "
+        f"host={parsed_db_url.host} "
+        f"port={parsed_db_url.port} "
+        f"db={parsed_db_url.database} "
+        f"ssl_enabled={'ssl' in CONNECT_ARGS}"
+    )
+except Exception as exc:
+    print(f"[DB TARGET] Unable to parse DATABASE_URL for diagnostics: {exc}")
 
 # Create engine
 engine = create_engine(
